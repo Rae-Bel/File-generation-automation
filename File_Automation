@@ -1,0 +1,41 @@
+function copyFilesWithNewName() {
+  // Define the old and new school years
+  var oldSchoolYear = 'XX-XX';  // Replace this with your current old school year
+  var newSchoolYear = '25-26';  // Replace this with your new school year
+
+  // Define the source and target folder IDs
+  var folderPairs = [
+    { sourceFolderId: '1gUrWEtpjBMhbmgqUxAOqcG_07lljxtx1', targetFolderId: '1jlE21SS6OAV4HdblNR5Njx5K6O7KoPiT' },  // Folder 1
+    { sourceFolderId: '1t-qMvwTFgNJcJflVxKvOxufvkXjKvCjx', targetFolderId: '1qRXq5nyOA3uPdqgUD2J3Kb9U-OcA244d' },  // Folder 2
+    { sourceFolderId: '1EQqCrCjSp9dqiJA52y8l0jR-xpwaU0fO', targetFolderId: '1hk27dD5jxcanXzkHmIA8it5T3ROgPaB-' },  // Folder 3
+    { sourceFolderId: '1-hdFMnT98F9mt9BmQc3rd-1gGRG8jWEQ', targetFolderId: '1_s3U8xp3NvTrtkl_oQUeonPei9Y0qZnk' },  // Folder 4
+    { sourceFolderId: '13iGHlF1lmNoBSZa6-mvZ3XnR_J9i9Tab', targetFolderId: '11p-RmeEi67ok5MCPAPOho9IySIhNOBf8' },  // Folder 5
+    { sourceFolderId: '1nsz964ydNHXNH6Q-fmgHgBUY_6g2n-AW', targetFolderId: '1d_IUWyqAZka0gV5e71E6OFriTz8vL75l' },  // Folder 6
+    { sourceFolderId: '1UMVSGlhtnoj7LWG9UZVeNgbnXG6u3wpD', targetFolderId: '1Qx1XCtE1iBmih7Q79-KP1IUs33YXq_L3' },  // Folder 7
+    { sourceFolderId: '1yut9541Z3r7T3fxPKB0rAngQ0RdfXnhE', targetFolderId: '1Yy53xw2rNJo-ZetjnarxiciVDKYMq2Yb' },  // Folder 8
+    { sourceFolderId: '1xf2psSZNdOP5ruW8LGRUukbeQtsZin7H', targetFolderId: '1hnLndJ72ZPKYrADKdEx3RAM2_wOTrItD' }   // Folder 9
+  ];
+
+  // Loop through each source-target folder pair
+  folderPairs.forEach(function(pair) {
+    var sourceFolder = DriveApp.getFolderById(pair.sourceFolderId);
+    var targetFolder = DriveApp.getFolderById(pair.targetFolderId);
+
+    // Get all the files in the source folder
+    var files = sourceFolder.getFiles();
+    
+    while (files.hasNext()) {
+      var file = files.next();
+      
+      // Get the file's name
+      var fileName = file.getName();
+      
+      // Check if the file's name contains the old school year and replace it
+      if (fileName.indexOf(oldSchoolYear) !== -1) {
+        // Create a copy of the file in the target folder with the new school year in the name
+        var copiedFile = file.makeCopy(fileName.replace(oldSchoolYear, newSchoolYear), targetFolder);
+        Logger.log('Copied file: ' + copiedFile.getName());
+      }
+    }
+  });
+}
