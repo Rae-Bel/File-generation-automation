@@ -1,0 +1,122 @@
+function updateSpecificTabNamesInMultipleFolders() {
+  // Define the source folders and their respective tab change rules
+  var folderConfigurations = [
+    {
+      folderId: '1jlE21SS6OAV4HdblNR5Njx5K6O7KoPiT', // Folder 1 ID
+      tabChanges: [
+        { oldName: 'XX/XX Sped Dept. Chairs', newName: '24/25 Sped Dept. Chairs' },
+        { oldName: 'XX/XX Sped Dept. Chairs MASTER', newName: '25/26 Sped Dept. Chairs MASTER' }
+      ]
+    },
+    {
+      folderId: '1qRXq5nyOA3uPdqgUD2J3Kb9U-OcA244d', // Folder 2 ID
+      tabChanges: [
+        { oldName: 'XX/XX', newName: '24/25' },
+        { oldName: 'XX/XX MASTER', newName: '25/26 MASTER' }
+      ]
+    },
+    {
+      folderId: '1hk27dD5jxcanXzkHmIA8it5T3ROgPaB-', // Folder 3 ID
+      tabChanges: [
+        { oldName: 'Memo & Routing', newName: 'Memo & Routing' }, // No change
+        { oldName: 'XX/XX Leadership Team', newName: '24/25 Leadership Team' },
+        { oldName: 'XX/XX Leadership Team MASTER', newName: '25/26 Leadership Team MASTER' },
+        { oldName: 'XX/XX Sped Dept. Chairs', newName: '24/25 Sped Dept. Chairs' },
+        { oldName: 'XX/XX Sped Dept. Chairs MASTER', newName: '25/26 Sped Dept. Chairs MASTER' }
+      ]
+    },
+    {
+      folderId: '1_s3U8xp3NvTrtkl_oQUeonPei9Y0qZnk', // Folder 4 ID
+      tabChanges: [
+        { oldName: 'Memo & Routing', newName: 'Memo & Routing' }, // No change
+        { oldName: 'XX/XX SFA', newName: '24/25 SFA' },
+        { oldName: 'XX/XX SFA MASTER', newName: '25/26 SFA MASTER' }
+      ]
+    },
+    {
+      folderId: '11p-RmeEi67ok5MCPAPOho9IySIhNOBf8', // Folder 5 ID
+      tabChanges: [
+        { oldName: 'Memo & Routing', newName: 'Memo & Routing' }, // No change
+        { oldName: 'XX/XX Department Chairs', newName: '24/25 Department Chairs' },
+        { oldName: 'XX/XX Department Chairs MASTER', newName: '25/26 Department Chairs MASTER' }
+      ]
+    },
+    {
+      folderId: '1d_IUWyqAZka0gV5e71E6OFriTz8vL75l', // Folder 6 ID
+      tabChanges: [
+        { oldName: 'Memo & Routing', newName: 'Memo & Routing' }, // No change
+        { oldName: 'XX/XX Sports', newName: '24/25 Sports' },
+        { oldName: 'XX/XX Sports MASTER', newName: '25/26 Sports MASTER' },
+        { oldName: 'XX/XX Trainers', newName: '24/25 Trainers' },
+        { oldName: 'XX/XX Trainers MASTER', newName: '25/26 Trainers MASTER' },
+        { oldName: 'XX/XX SFA', newName: '24/25 SFA' },
+        { oldName: 'XX/XX SFA MASTER', newName: '25/26 SFA MASTER' },
+        { oldName: 'XX/XX Cheer', newName: '24/25 Cheer' },
+        { oldName: 'XX/XX Cheer MASTER', newName: '25/26 Cheer MASTER' }
+      ]
+    },
+    {
+      folderId: '1Qx1XCtE1iBmih7Q79-KP1IUs33YXq_L3', // Folder 7 ID
+      tabChanges: [
+        { oldName: 'Memo & Routing', newName: 'Memo & Routing' }, // No change
+        { oldName: 'XX/XX Department Chairs', newName: '24/25 Department Chairs' },
+        { oldName: 'XX/XX Department Chairs MASTER', newName: '25/26 Department Chairs MASTER' }
+      ]
+    },
+    {
+      folderId: '1Yy53xw2rNJo-ZetjnarxiciVDKYMq2Yb', // Folder 8 ID
+      tabChanges: [
+        { oldName: 'Memo & Routing', newName: 'Memo & Routing' }, // No change
+        { oldName: 'XX/XX Sports', newName: '24/25 Sports' },
+        { oldName: 'XX/XX Sports MASTER', newName: '25/26 Sports MASTER' }
+      ]
+    },
+    {
+      folderId: '1hnLndJ72ZPKYrADKdEx3RAM2_wOTrItD', // Folder 9 ID
+      tabChanges: [
+        { oldName: 'Memo & Routing', newName: 'Memo & Routing' }, // No change
+        { oldName: 'XX/XX Sports', newName: '24/25 Sports' },
+        { oldName: 'XX/XX Sports MASTER', newName: '25/26 Sports MASTER' }
+      ]
+    }
+  ];
+
+  // Loop through each folder configuration
+  folderConfigurations.forEach(function (folderConfig) {
+    var folder = DriveApp.getFolderById(folderConfig.folderId);
+    var files = folder.getFilesByType(MimeType.GOOGLE_SHEETS); // Only Google Sheets files
+
+    // Process each Google Sheets file in the folder
+    while (files.hasNext()) {
+      var file = files.next();
+      var spreadsheet = SpreadsheetApp.openById(file.getId());
+      var sheets = spreadsheet.getSheets(); // Get all tabs (sheets) in the file
+
+      Logger.log('Processing file: ' + file.getName());
+      var renamedTabs = 0;
+
+      // Iterate over the tab changes for this folder
+      folderConfig.tabChanges.forEach(function (change) {
+        // Look for a tab with the specified old name
+        var targetTab = sheets.find(sheet => sheet.getName() === change.oldName);
+
+        if (targetTab) {
+          // Rename the tab if it matches the old name
+          targetTab.setName(change.newName);
+          Logger.log(
+            'Renamed tab "' + change.oldName + '" to "' + change.newName + '" in file: ' + file.getName()
+          );
+          renamedTabs++;
+        } else {
+          Logger.log(
+            'Tab with name "' + change.oldName + '" not found in file: ' + file.getName() + ' (skipped).'
+          );
+        }
+      });
+
+      if (renamedTabs === 0) {
+        Logger.log('No tabs were renamed in file: ' + file.getName());
+      }
+    }
+  });
+}
